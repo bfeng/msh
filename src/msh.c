@@ -25,27 +25,46 @@ void read_cmdline(char * cmdline)
 int childexec(char * cmdline)
 {
 	char * c = cmdline;
-	char ret[100];
+	char ret[BUFSIZE];
 	char *cmd_array[10];
-	int index = 0;
+	int index, cmd_index;
+	index = cmd_index = 0;
 	while (*c != '\0')
 	{
 		if (*c == ' ')
 		{
-			cmd_array[index] = (char *) malloc(sizeof(char) * strlen(ret) + 1);
-			strncpy(cmd_array[index], ret, strlen(ret));
-			strncat(cmd_array[index], "\0", 1);
-			index++;
+			ret[index] = '\0';
+
+			size_t ret_len = sizeof(ret)/sizeof(char);
+			size_t i = 0;
+			cmd_array[cmd_index] = (char *) malloc(sizeof(ret) + sizeof(char));
+			for(;i<ret_len;i++)
+			{
+				cmd_array[cmd_index][i] = ret[i];
+			}
+			cmd_index++;
+			index = 0;
 		}
 		else
 		{
-			strncat(ret, c, 1);
+			ret[index] = *c;
+			index++;
 		}
 		c++;
 	}
 
-	execv("/bin/ls", (char **) cmd_array);
+	ret[index] = '\0';
+	size_t ret_len = sizeof(ret)/sizeof(char);
+	size_t i = 0;
+	cmd_array[cmd_index] = (char *) malloc(sizeof(ret) + sizeof(char));
+	for(;i<ret_len;i++)
+	{
+		cmd_array[cmd_index][i] = ret[i];
+	}
+	cmd_index++;
+	index = 0;
 
+	execv(cmd_array[0], cmd_array);
 	return 0;
 }
 

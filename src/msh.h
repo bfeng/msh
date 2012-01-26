@@ -17,8 +17,8 @@
 
 #define BUFSIZE 256
 
-int childexec(char * cmdline);
 void read_profile(char ** profile);
 void read_cmdline(char * cmdline);
+int childexec(char * cmdline);
 
 #endif /* MSH_H_ */

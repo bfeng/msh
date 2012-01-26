@@ -45,6 +45,8 @@ int main(void)
 		else
 		{
 			waitpid(childpid, &status, options);
+			if (!WIFEXITED(status))
+				printf("Parent: child has not terminated normally.\n");
 		}
 	}
 	puts("Bye");
