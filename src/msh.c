@@ -35,10 +35,10 @@ int childexec(char * cmdline)
 		{
 			ret[index] = '\0';
 
-			size_t ret_len = sizeof(ret)/sizeof(char);
+			size_t ret_len = sizeof(ret) / sizeof(char);
 			size_t i = 0;
 			cmd_array[cmd_index] = (char *) malloc(sizeof(ret) + sizeof(char));
-			for(;i<ret_len;i++)
+			for (; i < ret_len; i++)
 			{
 				cmd_array[cmd_index][i] = ret[i];
 			}
@@ -54,10 +54,10 @@ int childexec(char * cmdline)
 	}
 
 	ret[index] = '\0';
-	size_t ret_len = sizeof(ret)/sizeof(char);
+	size_t ret_len = sizeof(ret) / sizeof(char);
 	size_t i = 0;
 	cmd_array[cmd_index] = (char *) malloc(sizeof(ret) + sizeof(char));
-	for(;i<ret_len;i++)
+	for (; i < ret_len; i++)
 	{
 		cmd_array[cmd_index][i] = ret[i];
 	}
@@ -71,10 +71,29 @@ int childexec(char * cmdline)
 /**
  * This function is used to read the configuration from a file into a variable-array which will be used later in the whole program.
  */
-void read_profile(char ** profile)
+int read_profile(char ** profile)
 {
 	// read the profile
-
 	// copy the configuration to the parameter which will be used later in the shell
+	static const char profile_path[] = "profile.src";
+	FILE * file = fopen(profile_path, "r");
+	if (file != NULL)
+	{
+		char line[128];
 
+		int i = 0;
+		while (fgets(line, sizeof(line), file) != NULL)
+		{
+			profile[i] = (char *)(malloc(sizeof(line)));
+			strcpy(profile[i], line);
+		}
+		fclose(file);
+	}
+	else
+	{
+		perror(profile_path);
+		return -1;
+	}
+
+	return 0;
 }

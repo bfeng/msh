@@ -17,7 +17,7 @@
 
 #define BUFSIZE 256
 
-void read_profile(char ** profile);
+int read_profile(char ** profile);
 void read_cmdline(char * cmdline);
 int childexec(char * cmdline);
 
