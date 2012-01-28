@@ -9,47 +9,35 @@
 
 int main(void)
 {
-	// trap the signal handler
-	// ...
+  // trap the signal handler
+  // ...
 
-	// init variables
-	char cmdline[BUFSIZE];
-	char * profile[BUFSIZE];
-	pid_t childpid;
-	int status, options = 0;
+  // init variables
+  char cmdline[BUFSIZE];
+  char *argv[BUFSIZE];
+  char * profile[BUFSIZE];
 
-	// read profile
-	read_profile(profile);
+  // read profile
+  read_profile(profile);
 
-	while (1)
-	{
-		printf("! "); // print the prompt which is settled in the profile
-		fflush(stdout); // flush in case the output is cached by os
+  // init msh
+  // make the current directory is the home assigned in the profile
+  init_sh(profile);
 
-		read_cmdline(cmdline);
+  while (1)
+  {
+    // print the prompt which is settled in the profile
+    print_prompt_sign(profile);
 
-		if (strcmp("exit", cmdline) == 0) // the "exit" will break the while loop and exit normally
-			break;
+    read_cmdline(cmdline);
 
-		childpid = fork();
-		if (childpid == -1)
-		{
-			perror("Cannot proceed. fork() error");
-			return 1;
-		}
-		if (childpid == 0)
-		{
-			childexec(cmdline);
-			return 0;
-		}
-		else
-		{
-			waitpid(childpid, &status, options);
-			if (!WIFEXITED(status))
-				printf("Parent: child has not terminated normally.\n");
-		}
-	}
-	puts("Bye");
-	return 0;
+    // the "exit" will break the while loop and exit normally
+    if (strcmp("exit", cmdline) == 0)
+      exit(0);
+
+    execute(cmdline, argv);
+  }
+  puts("Bye");
+  return 0;
 }
 

@@ -17,8 +17,18 @@
 
 #define BUFSIZE 256
 
+struct entry {
+	char * var_name;
+	char * var_value;
+};
+
+void change_dir(char *path);
+void init_sh(char **profile);
+void parse_cmdline(char *cmdline, char **argv);
+void print_prompt_sign(char **profile);
 int read_profile(char ** profile);
 void read_cmdline(char * cmdline);
-int childexec(char * cmdline);
+void execute(char *cmdline, char **argv);
+int childexec(char ** argv);
 
 #endif /* MSH_H_ */
