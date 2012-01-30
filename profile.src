@@ -1,4 +1,3 @@
-SIGN=$$$$
+SIGN=$
 PATH=/bin:/usr/bin
 HOME=/root
-
