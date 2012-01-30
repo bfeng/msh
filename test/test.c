@@ -18,10 +18,13 @@ int main(void)
 	puts("Start testting...");
 	if (test_read_profile() == FAIL)
 	{
-		ok = -1;
-		puts("Fail: function: read_profile()");
+		ok--;
+		puts("Failed: function: read_profile()");
 	}
-	return ok;
+	if(ok<0)
+    puts("%d function(s) failed!");
+  puts("Test finished");
+  return 0;
 }
 
 int test_read_profile()
