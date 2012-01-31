@@ -14,8 +14,11 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <string.h>
+#include <fcntl.h>
 
 #define BUFSIZE 256
+#define STDIN 0
+#define STDOUT 1
 
 struct entry {
 	char * var_name;
