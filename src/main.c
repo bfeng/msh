@@ -16,7 +16,7 @@ int main(void)
   char cmdline[BUFSIZE];
   char *argv[BUFSIZE];
   char * profile[BUFSIZE];
-
+	e_variables=(struct env_var *)malloc(sizeof(struct env_var)*256);
   // read profile
   read_profile(profile);
 

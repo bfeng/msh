@@ -21,7 +21,14 @@ struct entry {
 	char * var_name;
 	char * var_value;
 };
+struct env_var
+{
+	char* name;
+	int value;
+};
+struct env_var *e_variables;
 
+void point5(char * cmdline);
 void change_dir(char *path);
 void init_sh(char **profile);
 void parse_cmdline(char *cmdline, char **argv);
