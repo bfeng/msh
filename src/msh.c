@@ -402,7 +402,7 @@ void point5(char *input)
 	if(multi1||divi||addition1||subtraction1)
 	{
 		// Check Arithmetic is in Linux Format of Command: //res=$((a*b-c+d/e-f))
-		if(command[strlen(destination1)+1] == '$' && command[strlen(destination1)+2] == '(' \
+		if(command[strlen(destination1)+1] == '(' \
 				&& command[strlen(command)-1] == ')' )
 		{
 			// Handle Multiplication and Division first
@@ -518,7 +518,7 @@ void point5(char *input)
 
 		else
 		{
-			printf("myshell: Improper format, try: res=$(a*b-c+d/e-f)\n");
+			printf("myshell: Improper format, try: res=(a*b-c+d/e-f)\n");
 			return;
 		}	
 	}
@@ -628,39 +628,4 @@ void ctrl_CHandler(int param)
    longjmp(jump_buffer,1);
 }
 
-int parse1(char *cmdline, char **argv)
-{	
-     int count = 0;
-     while (*cmdline != '\0') 
-	{       
-         count++; 
-         while ( *cmdline == '$')
-              	 *cmdline++ = '\0';   
-         	 *argv++ = cmdline;          
-         while (*cmdline != '$') 
-              	  cmdline++;             
-        }
-     *argv = '\0';    	
-     return count; 	             
-}
 
-
-void execute1(char *cmdline, char **argv)
-{
-	parse1(cmdline, argv);
-	childexec1(argv);
-	char argv1=argv;
-	argv--;
-	strcat(argv,argv1);
-	childexec(argv);
-}
-
-childexec1( char ** argv)
-{
-	if(execvp(*argv,argv)<0)
-	{
-		perror("Error");
-		exit(1);
-	}
-	return execvp(*argv,argv);
-}
