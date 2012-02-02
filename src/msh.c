@@ -7,6 +7,8 @@
 
 #include "msh.h"
 
+jmp_buf jump_buffer;
+
 void parse_cmdline(char *cmdline, char **argv)
 {
   while(*cmdline !='\0')
@@ -103,6 +105,9 @@ void print_prompt_sign(char ** profile)
  */
 void read_cmdline(char * cmdline)
 {
+	 
+  signal(SIGINT, ctrl_CHandler);	
+  setjmp(jump_buffer); 
   int len = 0;
   char c;
   while ((c = getchar()) != '\n')
@@ -398,7 +403,6 @@ void point5(char *input)
 	{
 		// Check Arithmetic is in Linux Format of Command: //res=$((a*b-c+d/e-f))
 		if(command[strlen(destination1)+1] == '$' && command[strlen(destination1)+2] == '(' \
-			&& command[strlen(destination1)+3] == '(' && command[strlen(command)-2] == ')' \
 				&& command[strlen(command)-1] == ')' )
 		{
 			// Handle Multiplication and Division first
@@ -514,7 +518,7 @@ void point5(char *input)
 
 		else
 		{
-			printf("myshell: Improper format, try: res=$((a*b-c+d/e-f))\n");
+			printf("myshell: Improper format, try: res=$(a*b-c+d/e-f)\n");
 			return;
 		}	
 	}
@@ -608,4 +612,55 @@ void point5(char *input)
 		}
 	}	
     return;
+}
+
+void ctrl_CHandler(int param)
+{
+	
+   char alter[150];  
+   printf("\n Exit from the shell: Are you sure? [yes/no]: ");
+   scanf("%31s", alter);
+       
+   if((strcmp(alter, "y") == 0) || (strcmp(alter, "Y") == 0) || (strcmp(alter, "yes") == 0)
+   || (strcmp(alter, "YES") == 0))
+      exit(0);
+   else
+   longjmp(jump_buffer,1);
+}
+
+int parse1(char *cmdline, char **argv)
+{	
+     int count = 0;
+     while (*cmdline != '\0') 
+	{       
+         count++; 
+         while ( *cmdline == '$')
+              	 *cmdline++ = '\0';   
+         	 *argv++ = cmdline;          
+         while (*cmdline != '$') 
+              	  cmdline++;             
+        }
+     *argv = '\0';    	
+     return count; 	             
+}
+
+
+void execute1(char *cmdline, char **argv)
+{
+	parse1(cmdline, argv);
+	childexec1(argv);
+	char argv1=argv;
+	argv--;
+	strcat(argv,argv1);
+	childexec(argv);
+}
+
+childexec1( char ** argv)
+{
+	if(execvp(*argv,argv)<0)
+	{
+		perror("Error");
+		exit(1);
+	}
+	return execvp(*argv,argv);
 }

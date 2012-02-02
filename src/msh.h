@@ -19,6 +19,8 @@
 #define BUFSIZE 256
 #define STDIN 0
 #define STDOUT 1
+#define _JBLEN (18)
+typedef int jmp_buf[_JBLEN];
 
 struct entry {
 	char * var_name;
@@ -31,6 +33,7 @@ struct env_var
 };
 struct env_var *e_variables;
 
+void ctrl_CHandler(int param);
 void point5(char * cmdline);
 void change_dir(char *path);
 void init_sh(char **profile);
@@ -40,5 +43,7 @@ int read_profile(char ** profile);
 void read_cmdline(char * cmdline);
 void execute(char *cmdline, char **argv);
 int childexec(char ** argv);
+void execute1(char *cmdline, char **argv);
+childexec1( char ** argv);
 
 #endif /* MSH_H_ */
