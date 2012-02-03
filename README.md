@@ -11,9 +11,9 @@ In this project, you will write your own shell with some minimum requirements fr
 1. Your shell shall be invoked from the Ash shell provided with Minix.
 2. Your shell shall first execute a PROFILE file which defines the “prompt sign” and allows you to access programs provided in /bin and /usr/bin. Once the PROFILE file is executed, you will be in a HOME directory specified by you in the PROFILE file.
 3. In a command line of your shell you will be able to exercise utilities provided in /bin and /usr/bin. You will need to show that you can do the following: 
-> * a) A command with or without argument such as: cat, ls
-> * b) A command with or without argument whose output is redirected to a file such as:<code>ls –l > filename</code>
-> * c) A command with or without argument whose output is piped to the input of another command such as:<code>cat filename | wc</code>
+  * a) A command with or without argument such as: cat, ls
+  * b) A command with or without argument whose output is redirected to a file such as:<code>ls –l > filename</code>
+  * c) A command with or without argument whose output is piped to the input of another command such as:<code>cat filename | wc</code>
 
 4. In a command line, your shell can execute a simple application program that will spawn a new process. The application will echo the process id of the new process then exits. 
 5. In a command line, you can define integer variables (such as i with its value indicated by $i) and evaluate integer expressions. Cannot use environmental variables.
