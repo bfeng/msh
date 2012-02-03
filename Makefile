@@ -6,6 +6,9 @@ OBJECTS=msh.o
 all: $(OBJECTS) test
 	$(CC) $(CFLAGS) -o msh src/main.c msh.o -I"src/"
 
+point4: $(OBJECTS)
+	$(CC) $(CFLAGS) -o point4 src/point4.c
+
 test: $(OBJECTS)
 	$(CC) $(CFLAGS) -o test_msh msh.o test/test.c -I"src/"
 	./test_msh

@@ -148,6 +148,7 @@ void execute(char *cmdline, char **argv)
   childcmd[0] = cmdline;
 
   while(*cmdline != '>' && *cmdline != '|' &&
+        *cmdline != '$' &&
         *cmdline != '\0' && *cmdline != '\n')
   {
     cmdline++;
@@ -163,6 +164,15 @@ void execute(char *cmdline, char **argv)
     out_type = 2;
     *cmdline++ = '\0';
     childcmd[1] = cmdline;
+  }
+  else if(*cmdline=='$')
+  {
+    if(strncmp(cmdline, "$(", 2)==0)
+    {
+      out_type = 3;
+      *cmdline++ = '\0';
+      childcmd[1] = cmdline;
+    }
   }
 
   int n = strlen(childcmd[0]) - 1;
@@ -236,7 +246,6 @@ void execute(char *cmdline, char **argv)
         dup(fd[1]);
         childexec(argv);
         close(fd[1]);
-        puts("\n");
       }
       else
       {
@@ -247,6 +256,36 @@ void execute(char *cmdline, char **argv)
         childexec(argv);
         close(fd[0]);
       }
+      puts("\n");
+    }
+    else if(out_type==3)
+    {
+      childcmd[1]++;
+      size_t len = strlen(childcmd[1]);
+      childcmd[1][len-1] = '\0';
+
+      parse_cmdline(childcmd[1], argv);
+
+      int fd[2];
+      pipe(&fd[0]);
+      if(fork()!=0)
+      {
+        close(fd[0]);
+        close(STDOUT);
+        dup(fd[1]);
+        childexec(argv);
+        close(fd[1]);
+      }
+      else
+      {
+        close(fd[1]);
+        close(STDIN);
+        dup(fd[0]);
+        parse_cmdline(childcmd[0], argv);
+        childexec(argv);
+        close(fd[0]);
+      }
+      puts("\n");
     }
   }
   else
