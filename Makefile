@@ -4,7 +4,7 @@ CFLAGS=-Wall
 OBJECTS=msh.o
 
 all: $(OBJECTS) test
-	$(CC) $(CFLAGS) -o msh src/main.c msh.o
+	$(CC) $(CFLAGS) -o msh src/main.c msh.o -I"src/"
 
 test: $(OBJECTS)
 	$(CC) $(CFLAGS) -o test_msh msh.o test/test.c -I"src/"

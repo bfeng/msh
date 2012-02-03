@@ -128,12 +128,21 @@ int handle_builtin(char **argv)
 
 void execute(char *cmdline, char **argv)
 {
-  point5(cmdline);
-  return;
+  char *cmd = cmdline;
+  if(strlen(cmd) > 4)
+  {
+    if(strncmp(cmd, "res=", 4)==0)
+    {
+      point5(cmdline);
+      return;
+    }
+  }
+
   if(strlen(cmdline)<=0)
     return;
 
-  int out_type = 0; // 0 for stdout; 1 for redirect; 2 for pipeline
+  // 0 for stdout; 1 for redirect; 2 for pipeline
+  int out_type = 0;
 
   char *childcmd[2];
   childcmd[0] = cmdline;
