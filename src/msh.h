@@ -16,12 +16,13 @@
 #include <string.h>
 #include <fcntl.h>
 #include <setjmp.h>
+#include <signal.h>
 
 #define BUFSIZE 256
 #define STDIN 0
 #define STDOUT 1
-#define _JBLEN (18)
 
+char pathname[BUFSIZE];
 
 struct entry {
 	char * var_name;
