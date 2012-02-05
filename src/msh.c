@@ -125,6 +125,73 @@ int handle_builtin(char **argv)
   return 1;
 }
 
+int output_type(char * cmdline)
+{
+  int output = 0;
+  char * c = cmdline;
+  while(*c!='\0' && *c!='$' &&
+      *c!='>' && *c!='|' &&
+      *c!='\n')
+  {
+    c++;
+  }
+  if(*c=='>')
+    output = 1;
+  else if(*c=='|')
+    output = 2;
+  else if(*c=='$')
+  {
+    if(strncmp(c, "$(", 2)==0)
+      output = 3;
+  }
+  return output;
+}
+
+void exec_pipelines(char * cmdline, int fd[2])
+{
+  if(output_type(cmdline)==0)
+  {
+    close(fd[0]);
+    close(STDOUT);
+    dup(fd[1]);
+    childexecline(cmdline);
+    close(fd[1]);
+  }
+  else if(output_type(cmdline)==3)
+  {
+    /*
+    char *childcmd[2];
+    childcmd[0] = childcmd[1] = cmdline;
+    while(*childcmd[1]!='$')
+    {
+      childcmd[1]++;
+    }
+    *childcmd[1]++ = '\0';
+    childcmd[1]++;
+    size_t len = strlen(childcmd[1]);
+    childcmd[1][len-1] = '\0';
+    printf("parent:%s\n", childcmd[0]);
+    exec_pipelines(childcmd[1], 0);
+    */
+    /*
+    int fd[2];
+    pipe(fd);
+    if(fork()!=0)
+    {
+      close(STDIN);
+      dup(fd[0]);
+      parse_cmdline(cmdline, argv);
+      childexec(argv);
+      close(fd[0]);
+    }
+    else
+    {
+      exec_pipeline(cmdline, fd[1]);
+    }
+    */
+  }
+}
+
 void execute(char *cmdline, char **argv)
 {
   char *cmd = cmdline;
@@ -263,6 +330,22 @@ void execute(char *cmdline, char **argv)
       size_t len = strlen(childcmd[1]);
       childcmd[1][len-1] = '\0';
 
+      printf("childcmd[0]:%s\n", childcmd[0]);
+      printf("childcmd[1]:%s\n", childcmd[1]);
+
+      int fd[2];
+      pipe(fd);
+      if(fork()!=0)
+      {
+        close(fd[1]);
+        close(STDIN);
+        dup(fd[0]);
+        childexecline(childcmd[0]);
+        close(fd[0]);
+      }
+      else
+        exec_pipelines(childcmd[1], fd);
+      /*
       parse_cmdline(childcmd[1], argv);
 
       int fd[2];
@@ -284,6 +367,7 @@ void execute(char *cmdline, char **argv)
         childexec(argv);
         close(fd[0]);
       }
+      */
       puts("\n");
     }
   }
@@ -306,6 +390,13 @@ int childexec(char ** argv)
     exit(1);
   }
   return 0;
+}
+
+int childexecline(char * cmdline)
+{
+  char *argv[BUFSIZE];
+  parse_cmdline(cmdline, argv);
+  return childexec(argv);
 }
 
 /**

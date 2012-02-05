@@ -43,8 +43,10 @@ void parse_cmdline(char *cmdline, char **argv);
 void print_prompt_sign(char **profile);
 int read_profile(char ** profile);
 void read_cmdline(char * cmdline);
+void exec_pipelines(char * cmdline, int fd[2]);
 void execute(char *cmdline, char **argv);
 int childexec(char ** argv);
+int childexecline(char * cmdline);
 
 
 #endif /* MSH_H_ */
