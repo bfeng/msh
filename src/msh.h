@@ -24,15 +24,18 @@
 
 char pathname[BUFSIZE];
 
-struct entry {
+struct entry
+{
 	char * var_name;
 	char * var_value;
 };
+
 struct env_var
 {
 	char* name;
 	int value;
 };
+
 struct env_var *e_variables;
 
 void ctrl_CHandler(int param);
@@ -47,6 +50,5 @@ void exec_pipelines(char * cmdline, int fd[2]);
 void execute(char *cmdline, char **argv);
 int childexec(char ** argv);
 int childexecline(char * cmdline);
-
 
 #endif /* MSH_H_ */

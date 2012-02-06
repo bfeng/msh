@@ -14,10 +14,10 @@ test: $(OBJECTS)
 	./test_msh
 
 main.o:
-	$(CC) $(CFLAGS) -c src/main.c
+	$(CC) $(CFLAGS) -c src/main.c -I"src"
 
 msh.o:
-	$(CC) $(CFLAGS) -c src/msh.c
+	$(CC) $(CFLAGS) -c src/msh.c src/msh.h
 
 clean:
 	rm $(OBJECTS) msh test_msh

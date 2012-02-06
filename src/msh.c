@@ -95,7 +95,7 @@ void init_sh(char **profile)
 void print_prompt_sign(char ** profile)
 {
   char * sign = read_var(profile, "SIGN");
-  printf("[%s] %s ", getcwd(pathname, sizeof(pathname)/sizeof(char)), sign);
+  printf("[%s]%s ", getcwd(pathname, sizeof(pathname)/sizeof(char)), sign);
   fflush(stdout); // flush in case the output is cached by os
 }
 
@@ -151,15 +151,15 @@ void exec_pipelines(char * cmdline, int fd[2])
 {
   if(output_type(cmdline)==0)
   {
+    dup2(fd[1], STDOUT);
+
     close(fd[0]);
-    close(STDOUT);
-    dup(fd[1]);
-    childexecline(cmdline);
     close(fd[1]);
+
+    childexecline(cmdline);
   }
   else if(output_type(cmdline)==3)
   {
-    /*
     char *childcmd[2];
     childcmd[0] = childcmd[1] = cmdline;
     while(*childcmd[1]!='$')
@@ -170,25 +170,23 @@ void exec_pipelines(char * cmdline, int fd[2])
     childcmd[1]++;
     size_t len = strlen(childcmd[1]);
     childcmd[1][len-1] = '\0';
-    printf("parent:%s\n", childcmd[0]);
-    exec_pipelines(childcmd[1], 0);
-    */
-    /*
-    int fd[2];
-    pipe(fd);
+
+    int child_fd[2];
+    pipe(child_fd);
     if(fork()!=0)
     {
-      close(STDIN);
-      dup(fd[0]);
-      parse_cmdline(cmdline, argv);
-      childexec(argv);
+      dup2(fd[1], STDOUT);
+      dup2(child_fd[0], STDIN);
+
       close(fd[0]);
+      close(fd[1]);
+      close(child_fd[0]);
+      close(child_fd[1]);
+
+      childexecline(childcmd[0]);
     }
     else
-    {
-      exec_pipeline(cmdline, fd[1]);
-    }
-    */
+      exec_pipelines(childcmd[1], child_fd);
   }
 }
 
@@ -330,44 +328,19 @@ void execute(char *cmdline, char **argv)
       size_t len = strlen(childcmd[1]);
       childcmd[1][len-1] = '\0';
 
-      printf("childcmd[0]:%s\n", childcmd[0]);
-      printf("childcmd[1]:%s\n", childcmd[1]);
-
       int fd[2];
       pipe(fd);
       if(fork()!=0)
       {
-        close(fd[1]);
-        close(STDIN);
-        dup(fd[0]);
-        childexecline(childcmd[0]);
+        dup2(fd[0], STDIN);
+
         close(fd[0]);
+        close(fd[1]);
+
+        childexecline(childcmd[0]);
       }
       else
         exec_pipelines(childcmd[1], fd);
-      /*
-      parse_cmdline(childcmd[1], argv);
-
-      int fd[2];
-      pipe(&fd[0]);
-      if(fork()!=0)
-      {
-        close(fd[0]);
-        close(STDOUT);
-        dup(fd[1]);
-        childexec(argv);
-        close(fd[1]);
-      }
-      else
-      {
-        close(fd[1]);
-        close(STDIN);
-        dup(fd[0]);
-        parse_cmdline(childcmd[0], argv);
-        childexec(argv);
-        close(fd[0]);
-      }
-      */
       puts("\n");
     }
   }
