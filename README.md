@@ -59,9 +59,3 @@ Development
 License
 -------
 [GPL v3](http://www.gnu.org/licenses/gpl-3.0.txt)
-
-Team @ IIT
----------------------
-* Bo Feng
-* Karthik Kumar Somayajula
-* Diwakar Atwal
