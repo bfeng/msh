@@ -1,4 +1,4 @@
-msh -- A minix's shell program
+msh - A minix's shell program
 ===
 
 Introduction
